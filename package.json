@@ -4,7 +4,9 @@
   "description": "This project contains my JavaScript kata solutions for codewars.com",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "lint": "standard --env mocha \"**/*.js\"",
+    "stylefix": "standard --env mocha \"**/*.js\" --fix"
   },
   "author": "borisskert",
   "license": "ISC",
@@ -14,6 +16,7 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
-    "mocha": "^9.1.4"
+    "mocha": "^9.1.4",
+    "standard": "^16.0.4"
   }
 }

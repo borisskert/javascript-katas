@@ -11,4 +11,17 @@ npm ci
 npm test
 ```
 
+## Run [Standard-JS'](https://standardjs.com/) stylecheck/linting
+
+```shell
+npm ci
+npm run lint
+```
+
+## Fix style automatically
+
+```shell
+npm run stylefix
+```
+
 Please do not re-submit my solutions.
