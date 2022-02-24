@@ -24,4 +24,13 @@ npm run lint
 npm run stylefix
 ```
 
+### pre-commit hooks
+
+Pro-tip: Use [pre-commit](https://pre-commit.com/) for this project.
+
+```shell
+$ pre-commit install
+pre-commit installed at .git/hooks/pre-commit
+```
+
 Please do not re-submit my solutions.
