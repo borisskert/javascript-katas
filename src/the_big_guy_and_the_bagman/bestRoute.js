@@ -6,10 +6,11 @@ function bestRoute (cities, costs) {
 
   const hometown = 'Notgnihsaw'
 
-  return basedOn(prices).startFrom(hometown)
+  return basedOn(prices)
+    .startFrom(hometown)
     .visitAll(cities)
     .flatMap(route => route.visit(hometown))
-    .sort(compareRoutes)[0]
+    .sort(compareRouteCosts)[0]
     .tail()
 }
 
@@ -72,7 +73,7 @@ const basedOn = (travelPrices) => {
   }
 }
 
-const compareRoutes = (a, b) => {
+const compareRouteCosts = (a, b) => {
   return a.costs - b.costs
 }
 
