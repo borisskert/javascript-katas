@@ -42,15 +42,15 @@ function bestRoute (cities, costs) {
     static startFrom (city) {
       return new Route([city], 0)
     }
-
-    static empty () {
-      return new Route([], 0)
-    }
   }
 
   const hometown = 'Notgnihsaw'
 
-  return Route.startFrom(hometown).visitAll(cities).flatMap(route => route.visit(hometown)).sort(compareRoutes)[0].tail()
+  return Route.startFrom(hometown)
+    .visitAll(cities)
+    .flatMap(route => route.visit(hometown))
+    .sort(compareRoutes)[0]
+    .tail()
 }
 
 const compareRoutes = (a, b) => {
@@ -58,7 +58,7 @@ const compareRoutes = (a, b) => {
 }
 
 const mapTravelPrices = (cities, costs) => {
-  const routes = zip([cities, costs]).map(([city, costs]) => {
+  const priceMap = zip([cities, costs]).map(([city, costs]) => {
     return {
       city: city,
       routes: zip([cities, costs])
@@ -70,7 +70,7 @@ const mapTravelPrices = (cities, costs) => {
 
   return {
     costs (from, to) {
-      return routes.find(({ city }) => city === from).routes[to]
+      return priceMap.find(({ city }) => city === from).routes[to]
     }
   }
 }
