@@ -2,7 +2,7 @@
  * https://www.codewars.com/kata/6297d639de3969003e13e149/train/javascript
  */
 function bestRoute (cities, costs) {
-  const travel = Travel.from(cities, costs)
+  const prices = mapTravelPrices(cities, costs)
 
   class Route {
     constructor (cities, costs) {
@@ -14,27 +14,23 @@ function bestRoute (cities, costs) {
       return this.cities.find(visited => visited === city) === undefined
     }
 
-    append (city, costs) {
-      return new Route([...this.cities, city], this.costs + costs)
-    }
-
     last () {
       return this.cities[this.cities.length - 1]
     }
 
     visit (city) {
-      const costs = travel.costs(this.last(), city)
+      const costs = prices.costs(this.last(), city)
       return new Route([...this.cities, city], this.costs + costs)
     }
 
     visitAll (cities) {
       const allowedCities = cities.filter(city => this.accept(city))
+
       if (allowedCities.length < 1) {
         return [this]
       }
 
-      const visited = allowedCities
-        .flatMap(city => this.append(city, travel.costs(this.last(), city)))
+      const visited = allowedCities.flatMap(city => this.visit(city))
 
       return visited.flatMap(r => r.visitAll(cities))
     }
@@ -61,27 +57,21 @@ const compareRoutes = (a, b) => {
   return a.costs - b.costs
 }
 
-class Travel {
-  constructor (routes) {
-    this.routes = routes
-  }
+const mapTravelPrices = (cities, costs) => {
+  const routes = zip([cities, costs]).map(([city, costs]) => {
+    return {
+      city: city,
+      routes: zip([cities, costs])
+        .filter(([_, costs]) => costs > 0)
+        .map(([target, costs]) => ({ [target]: costs }))
+        .reduce((obj, x) => ({ ...obj, ...x }))
+    }
+  })
 
-  costs (from, to) {
-    return this.routes.find(({ city }) => city === from).routes[to]
-  }
-
-  static from (cities, costs) {
-    const routes = zip([cities, costs]).map(([city, costs]) => {
-      return {
-        city: city,
-        routes: zip([cities, costs])
-          .filter(([_, costs]) => costs > 0)
-          .map(([target, costs]) => ({ [target]: costs }))
-          .reduce((obj, x) => ({ ...obj, ...x }))
-      }
-    })
-
-    return new Travel(routes)
+  return {
+    costs (from, to) {
+      return routes.find(({ city }) => city === from).routes[to]
+    }
   }
 }
 
