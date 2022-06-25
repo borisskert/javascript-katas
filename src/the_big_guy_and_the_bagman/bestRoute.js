@@ -60,17 +60,16 @@ const compareRoutes = (a, b) => {
 const mapTravelPrices = (cities, costs) => {
   const priceMap = zip([cities, costs]).map(([city, costs]) => {
     return {
-      city: city,
-      routes: zip([cities, costs])
+      [city]: zip([cities, costs])
         .filter(([_, costs]) => costs > 0)
         .map(([target, costs]) => ({ [target]: costs }))
-        .reduce((obj, x) => ({ ...obj, ...x }))
+        .reduce(toObject)
     }
-  })
+  }).reduce(toObject)
 
   return {
     costs (from, to) {
-      return priceMap.find(({ city }) => city === from).routes[to]
+      return priceMap[from][to]
     }
   }
 }
@@ -79,5 +78,7 @@ function zip (arrays) {
   const others = arrays.slice(1)
   return arrays[0].map((x, index) => [x, ...others.map(array => array[index])])
 }
+
+const toObject = (obj, x) => ({ ...obj, ...x })
 
 module.exports = bestRoute
