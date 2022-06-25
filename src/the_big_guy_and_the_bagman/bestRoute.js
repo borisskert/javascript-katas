@@ -4,6 +4,27 @@
 function bestRoute (cities, costs) {
   const prices = mapTravelPrices(cities, costs)
 
+  const hometown = 'Notgnihsaw'
+
+  return basedOn(prices).startFrom(hometown)
+    .visitAll(cities)
+    .flatMap(route => route.visit(hometown))
+    .sort(compareRoutes)[0]
+    .tail()
+}
+
+const mapTravelPrices = (cities, costs) => {
+  return zip([cities, costs]).map(([city, costs]) => {
+    return {
+      [city]: zip([cities, costs])
+        .filter(([_, costs]) => costs > 0)
+        .map(([target, costs]) => ({ [target]: costs }))
+        .reduce(toObject)
+    }
+  }).reduce(toObject)
+}
+
+function basedOn (travelPrices) {
   class Route {
     constructor (cities, costs) {
       this.cities = cities
@@ -19,7 +40,7 @@ function bestRoute (cities, costs) {
     }
 
     visit (city) {
-      const costs = prices[this.last()][city]
+      const costs = travelPrices[this.last()][city]
       return new Route([...this.cities, city], this.costs + costs)
     }
 
@@ -32,7 +53,7 @@ function bestRoute (cities, costs) {
 
       const visited = allowedCities.flatMap(city => this.visit(city))
 
-      return visited.flatMap(r => r.visitAll(cities))
+      return visited.flatMap(route => route.visitAll(cities))
     }
 
     tail () {
@@ -44,28 +65,15 @@ function bestRoute (cities, costs) {
     }
   }
 
-  const hometown = 'Notgnihsaw'
-
-  return Route.startFrom(hometown)
-    .visitAll(cities)
-    .flatMap(route => route.visit(hometown))
-    .sort(compareRoutes)[0]
-    .tail()
+  return {
+    startFrom: (city) => {
+      return Route.startFrom(city)
+    }
+  }
 }
 
 const compareRoutes = (a, b) => {
   return a.costs - b.costs
-}
-
-const mapTravelPrices = (cities, costs) => {
-  return zip([cities, costs]).map(([city, costs]) => {
-    return {
-      [city]: zip([cities, costs])
-        .filter(([_, costs]) => costs > 0)
-        .map(([target, costs]) => ({ [target]: costs }))
-        .reduce(toObject)
-    }
-  }).reduce(toObject)
 }
 
 function zip (arrays) {
