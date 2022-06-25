@@ -24,19 +24,23 @@ const mapTravelPrices = (cities, costs) => {
   }).reduce(toObject)
 }
 
-function basedOn (travelPrices) {
+const basedOn = (travelPrices) => {
   class Route {
     constructor (cities, costs) {
       this.cities = cities
       this.costs = costs
     }
 
-    accept (city) {
-      return this.cities.find(visited => visited === city) === undefined
-    }
-
     last () {
       return this.cities[this.cities.length - 1]
+    }
+
+    tail () {
+      return this.cities.slice(1)
+    }
+
+    accept (city) {
+      return this.cities.find(visited => visited === city) === undefined
     }
 
     visit (city) {
@@ -56,10 +60,6 @@ function basedOn (travelPrices) {
       return visited.flatMap(route => route.visitAll(cities))
     }
 
-    tail () {
-      return this.cities.slice(1)
-    }
-
     static startFrom (city) {
       return new Route([city], 0)
     }
@@ -76,7 +76,7 @@ const compareRoutes = (a, b) => {
   return a.costs - b.costs
 }
 
-function zip (arrays) {
+const zip = (arrays) => {
   const others = arrays.slice(1)
   return arrays[0].map((x, index) => [x, ...others.map(array => array[index])])
 }
