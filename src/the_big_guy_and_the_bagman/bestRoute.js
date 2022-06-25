@@ -19,7 +19,7 @@ function bestRoute (cities, costs) {
     }
 
     visit (city) {
-      const costs = prices.costs(this.last(), city)
+      const costs = prices[this.last()][city]
       return new Route([...this.cities, city], this.costs + costs)
     }
 
@@ -58,7 +58,7 @@ const compareRoutes = (a, b) => {
 }
 
 const mapTravelPrices = (cities, costs) => {
-  const priceMap = zip([cities, costs]).map(([city, costs]) => {
+  return zip([cities, costs]).map(([city, costs]) => {
     return {
       [city]: zip([cities, costs])
         .filter(([_, costs]) => costs > 0)
@@ -66,12 +66,6 @@ const mapTravelPrices = (cities, costs) => {
         .reduce(toObject)
     }
   }).reduce(toObject)
-
-  return {
-    costs (from, to) {
-      return priceMap[from][to]
-    }
-  }
 }
 
 function zip (arrays) {
