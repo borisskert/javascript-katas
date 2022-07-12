@@ -6,47 +6,47 @@ function score (dice) {
     return 0
   }
 
-  console.log(dice)
+  const { remaining, points } = rules
+    .map(rule => rule(dice))
+    .find(rule => rule.matches(dice.sort()))
 
-  if (dice.length >= 3) {
-    const [one, two, three, ...remaining] = dice.sort()
+  return points + score(remaining())
+}
 
-    if ([one, two, three].every(x => x === 1)) {
-      return 1000 + score(remaining)
-    }
+const rules = [
+  threeOf(1, 1000),
+  threeOf(6, 600),
+  threeOf(5, 500),
+  threeOf(4, 400),
+  threeOf(3, 300),
+  threeOf(2, 200),
+  oneOf(1, 100),
+  oneOf(5, 50),
+  fallback()
+]
 
-    if ([one, two, three].every(x => x === 6)) {
-      return 600 + score(remaining)
-    }
+function threeOf (value, points) {
+  return (dice) => ({
+    matches: () => dice.length >= 3 && dice.slice(0, 3).every(x => x === value),
+    remaining: () => dice.slice(3),
+    points
+  })
+}
 
-    if ([one, two, three].every(x => x === 5)) {
-      return 500 + score(remaining)
-    }
+function oneOf (value, points) {
+  return (dice) => ({
+    matches: () => dice.length >= 1 && dice[0] === value,
+    remaining: () => dice.slice(1),
+    points
+  })
+}
 
-    if ([one, two, three].every(x => x === 4)) {
-      return 400 + score(remaining)
-    }
-
-    if ([one, two, three].every(x => x === 3)) {
-      return 300 + score(remaining)
-    }
-
-    if ([one, two, three].every(x => x === 2)) {
-      return 200 + score(remaining)
-    }
-  }
-
-  const remaining = dice.slice(1)
-
-  if (dice[0] === 1) {
-    return 100 + score(remaining)
-  }
-
-  if (dice[0] === 5) {
-    return 50 + score(remaining)
-  }
-
-  return score(remaining)
+function fallback () {
+  return (dice) => ({
+    matches: () => true,
+    remaining: () => dice.slice(1),
+    points: 0
+  })
 }
 
 module.exports = score
