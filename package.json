@@ -17,7 +17,8 @@
   "devDependencies": {
     "chai": "^4.4.1",
     "mocha": "^10.3.0",
-    "standard": "^17.1.0"
+    "standard": "^17.1.0",
+    "@codewars/test-compat": "^1.1.0"
   },
   "standard": {
     "env": {
